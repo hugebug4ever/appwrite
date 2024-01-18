@@ -322,6 +322,16 @@ return [
         'beta' => false,
         'mock' => false,
     ],
+    'wechat' => [
+        'name' => 'WeChat',
+        'developers' => 'https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Development_Guide.html',
+        'icon' => 'icon-wechat',
+        'enabled' => true,
+        'sandbox' => false,
+        'form' => false,
+        'beta' => false,
+        'mock' => false
+    ],
     'wordpress' => [
         'name' => 'WordPress',
         'developers' => 'https://developer.wordpress.com/docs/oauth2/',
