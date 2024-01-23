@@ -1,13 +1,17 @@
 <?php
 
 namespace Appwrite\Auth\OAuth2;
-
+use Utopia\CLI\Console;
 use Appwrite\Auth\OAuth2;
 
 // Reference Material
 // https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Authorized_API_call_UnionID.html
-
-class WeChat extends OAuth2
+// 返回值说明:
+//    https://developers.weixin.qq.com/doc/oplatform/Return_codes/Return_code_descriptions_new.html
+//    42001 access_token 超时
+//    42002 refresh_token 超时
+//    42003 oauth_code 超时
+class Wechat extends OAuth2
 {
     private string $endpoint = 'https://api.weixin.qq.com/sns/';
     protected array $user = [];
@@ -47,8 +51,32 @@ class WeChat extends OAuth2
                     'code' => $code,
                     'grant_type' => 'authorization_code']);
             $resp = $this->request('GET', $query);
+            // check error
+            $error = \json_decode($resp, true);
+            if($error['errcode'] ?? 0) {
+                Console::info("1.====================\n" . $resp);
+                $oauth2Err=['error' => $error['errcode'], 'error_description' => $error['errmsg']];
+                $oauth2ErrStr = \json_encode($oauth2Err);
+                throw new Exception($oauth2ErrStr);
+            }
             $this->tokens=\json_decode($resp, true);
             $this->openid = $this->tokens['openid'] ?? '';
+
+            // tokens 可能已经过期
+            // code 虽然更新，但 access_token 未必更新, 需要 refresh_token 刷新状态
+            $query = $this->endpoint . "/sns/auth" .
+                    \http_build_query([
+                        'access_token' => $this->tokens['access_token'],
+                        'openid' => $this->openid,
+                    ]);
+            $resp = $this->request('GET', $query);
+            $error = \json_decode($resp, true);
+            if($error['errcode'] ?? 0) {
+                Console::info("2.====================\n" . $resp);
+                $oauth2Err=['error' => $error['errcode'], 'error_description' => $error['errmsg']];
+                $oauth2ErrStr = \json_encode($oauth2Err);
+                throw new Exception($oauth2ErrStr);
+            }
         }
 
         return $this->tokens;
@@ -66,10 +94,6 @@ class WeChat extends OAuth2
                 'grant_type' => 'refresh_token']);
         $resp = $this->request('GET', $query);
         $this->tokens=\json_decode($resp, true);
-
-        if (empty($this->tokens['refresh_token'])) {
-            $this->tokens['refresh_token'] = $refreshToken;
-        }
         $this->openid = $this->tokens['openid'] ?? '';
 
         return $this->tokens;

@@ -323,7 +323,7 @@ return [
         'mock' => false,
     ],
     'wechat' => [
-        'name' => 'WeChat',
+        'name' => 'Wechat',
         'developers' => 'https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Development_Guide.html',
         'icon' => 'icon-wechat',
         'enabled' => true,

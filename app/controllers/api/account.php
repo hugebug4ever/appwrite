@@ -45,6 +45,7 @@ use Utopia\Validator\WhiteList;
 use Appwrite\Auth\Validator\PasswordHistory;
 use Appwrite\Auth\Validator\PasswordDictionary;
 use Appwrite\Auth\Validator\PersonalData;
+// use Utopia\CLI\Console;
 
 $oauthDefaultSuccess = '/auth/oauth2/success';
 $oauthDefaultFailure = '/auth/oauth2/failure';
@@ -454,6 +455,12 @@ App::get('/v1/account/sessions/oauth2/:provider/redirect')
 
         $className = 'Appwrite\\Auth\\OAuth2\\' . \ucfirst($provider);
 
+        // Console::info("==========provider:" . $provider . "==========class:" . $className . "====================");
+        // Console::info("providerEnabled:" . $providerEnabled);
+        // Console::info("callback:" . $callback);
+        // Console::info("defaultState:" .json_encode($defaultState));
+        // Console::info("state:" . $state);
+
         if (!\class_exists($className)) {
             throw new Exception(Exception::PROJECT_PROVIDER_UNSUPPORTED);
         }
@@ -497,6 +504,8 @@ App::get('/v1/account/sessions/oauth2/:provider/redirect')
                 $failure['query'] = URLParser::unparseQuery($query);
                 $response->redirect(URLParser::unparse($failure), 301);
             }
+
+            // Console::info("failureRedirect:" . URLParser::unparse($failure));
 
             throw $exception;
         });
