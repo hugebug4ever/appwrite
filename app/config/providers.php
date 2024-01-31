@@ -325,7 +325,8 @@ return [
     'wechat' => [
         'name' => 'Wechat',
         'developers' => 'https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Development_Guide.html',
-        'icon' => 'icon-wechat',
+        # for icon is located in submodule appwrite/console. here we use an dummy one
+        'icon' => 'icon-apple',
         'enabled' => true,
         'sandbox' => false,
         'form' => false,

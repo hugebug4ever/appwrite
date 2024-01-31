@@ -13,7 +13,7 @@ use Appwrite\Auth\OAuth2;
 //    42003 oauth_code 超时
 class Wechat extends OAuth2
 {
-    private string $endpoint = 'https://api.weixin.qq.com/sns/';
+    private string $endpoint = 'https://api.weixin.qq.com/sns';
     protected array $user = [];
     protected array $tokens = [];
     protected array $scopes = [
@@ -44,7 +44,7 @@ class Wechat extends OAuth2
             // Make sure to use '$this->getScopes()' to include all scopes properly
             // $this->tokens = ["[FETCH TOKEN RESPONSE]"];
 
-            $query = $this->endpoint . 'oauth2/access_token?' .
+            $query = $this->endpoint . '/oauth2/access_token?' .
                     \http_build_query([
                     'appid' => $this->appID,
                     'secret' => $this->appSecret,
@@ -64,19 +64,21 @@ class Wechat extends OAuth2
 
             // tokens 可能已经过期
             // code 虽然更新，但 access_token 未必更新, 需要 refresh_token 刷新状态
-            $query = $this->endpoint . "/sns/auth" .
-                    \http_build_query([
-                        'access_token' => $this->tokens['access_token'],
-                        'openid' => $this->openid,
-                    ]);
-            $resp = $this->request('GET', $query);
-            $error = \json_decode($resp, true);
-            if($error['errcode'] ?? 0) {
-                Console::info("2.====================\n" . $resp);
-                $oauth2Err=['error' => $error['errcode'], 'error_description' => $error['errmsg']];
-                $oauth2ErrStr = \json_encode($oauth2Err);
-                throw new Exception($oauth2ErrStr);
-            }
+
+            // TODO: revise following code
+            // $query = $this->endpoint . "/sns/auth" .
+            //         \http_build_query([
+            //             'access_token' => $this->tokens['access_token'],
+            //             'openid' => $this->openid,
+            //         ]);
+            // $resp = $this->request('GET', $query);
+            // $error = \json_decode($resp, true);
+            // if($error['errcode'] ?? 0) {
+            //     Console::info("2.====================\n" . "query: " .$query ."\n" . "resp: ". $resp);
+            //     $oauth2Err=['error' => $error['errcode'], 'error_description' => $error['errmsg']];
+            //     $oauth2ErrStr = \json_encode($oauth2Err);
+            //     throw new Exception($oauth2ErrStr);
+            // }
         }
 
         return $this->tokens;
@@ -87,7 +89,7 @@ class Wechat extends OAuth2
         // TODO: Fire request to oauth API to generate access_token using refresh token
         // $this->tokens = ["[FETCH TOKEN RESPONSE]"];
 
-        $query = $this->endpoint . 'oauth2/refresh_token?' .
+        $query = $this->endpoint . '/oauth2/refresh_token?' .
                 \http_build_query([
                 'appid' => $this->appID,
                 'refresh_token' => $refreshToken,
@@ -156,7 +158,7 @@ class Wechat extends OAuth2
             // TODO: Fire request to oauth API to get information about users
             // $this->user = "[FETCH USER RESPONSE]";
 
-            $query = $this->endpoint . 'userinfo?' .
+            $query = $this->endpoint . '/userinfo?' .
                     \http_build_query([
                     'openid' => $this->openid,
                     'access_token' => $accessToken]);
