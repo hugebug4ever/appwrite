@@ -132,7 +132,9 @@ class Apple extends OAuth2
      */
     public function getUserEmail(string $accessToken): string
     {
-        return $this->claims['email'] ?? '';
+        // xilei: for ios dont't supply email situation 
+        // return $this->claims['email'] ?? ''; 
+        return $this->claims['email'] ?? $this->getUserID($accessToken) . '@pp.com'; 
     }
 
     /**
