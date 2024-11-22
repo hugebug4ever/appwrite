@@ -322,6 +322,17 @@ return [
         'beta' => false,
         'mock' => false,
     ],
+    'wechat' => [
+        'name' => 'Wechat',
+        'developers' => 'https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Development_Guide.html',
+        # for icon is located in submodule appwrite/console. here we use an dummy one
+        'icon' => 'icon-apple',
+        'enabled' => true,
+        'sandbox' => false,
+        'form' => false,
+        'beta' => false,
+        'mock' => false
+    ],
     'wordpress' => [
         'name' => 'WordPress',
         'developers' => 'https://developer.wordpress.com/docs/oauth2/',
